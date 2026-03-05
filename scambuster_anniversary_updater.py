@@ -44,9 +44,22 @@ COMMON_WOW_ROOTS = [
 
 # HELPERS
 def resource_path(relative: str) -> str:
-    """Get absolute path to resource, works for dev and bundled exe."""
+    """Get absolute path to bundled resource (e.g. icon), dev and exe."""
     base_path = getattr(sys, "_MEIPASS", Path(sys.argv[0]).resolve().parent)
     return str(Path(base_path) / relative)
+
+
+def user_dir() -> Path:
+    """Folder for user data like config.json (next to exe/script)."""
+    if getattr(sys, "frozen", False):
+        # Running as exe
+        return Path(sys.executable).resolve().parent
+    # Running as .py
+    return Path(sys.argv[0]).resolve().parent
+
+
+def get_config_path() -> Path:
+    return user_dir() / CONFIG_FILE
 
 
 def load_json(path: str | Path, default):
@@ -63,11 +76,11 @@ def save_json(path: str | Path, data) -> None:
 
 
 def get_config():
-    return load_json(resource_path(CONFIG_FILE), {"wow_root": ""})
+    return load_json(get_config_path(), {"wow_root": ""})
 
 
 def save_config(cfg) -> None:
-    save_json(resource_path(CONFIG_FILE), cfg)
+    save_json(get_config_path(), cfg)
 
 
 def get_anniversary_addons_path(wow_root: Path) -> Path:
@@ -407,7 +420,7 @@ def create_app():
 
     # Separate AppID so Windows uses this icon on taskbar/tray
     try:
-        myappid = "Spineshatter.Scambuster.Updater"
+        myappid = "Scambuster.Anniversary.Updater"
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
     except Exception:
         pass
@@ -417,7 +430,7 @@ def create_app():
 
     # Window + taskbar icon
     try:
-        icon_path = resource_path("spineshatter.ico")
+        icon_path = resource_path("scambuster_anniversary_updater.ico")
         root.iconbitmap(icon_path)
     except Exception:
         pass
