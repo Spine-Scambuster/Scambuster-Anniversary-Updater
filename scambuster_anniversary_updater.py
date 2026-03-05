@@ -32,7 +32,10 @@ ADDONS = [
 ]
 
 API_RELEASES_URL_TMPL = "https://api.github.com/repos/{owner}/{repo}/releases/latest"
+
+APP_NAME = "ScambusterAnniversaryUpdater"
 CONFIG_FILE = "config.json"
+
 ANNIVERSARY_SUBPATH = Path("_anniversary_") / "Interface" / "AddOns"
 COMMON_WOW_ROOTS = [
     Path(r"C:\Program Files (x86)\World of Warcraft"),
@@ -50,12 +53,14 @@ def resource_path(relative: str) -> str:
 
 
 def user_dir() -> Path:
-    """Folder for user data like config.json (next to exe/script)."""
-    if getattr(sys, "frozen", False):
-        # Running as exe
-        return Path(sys.executable).resolve().parent
-    # Running as .py
-    return Path(sys.argv[0]).resolve().parent
+    """
+    Folder for user data like config.json.
+    Uses %APPDATA%\APP_NAME on Windows, falls back to home if needed.
+    """
+    base = os.getenv("APPDATA") or str(Path.home())
+    cfg_dir = Path(base) / APP_NAME
+    cfg_dir.mkdir(parents=True, exist_ok=True)
+    return cfg_dir
 
 
 def get_config_path() -> Path:
@@ -71,8 +76,12 @@ def load_json(path: str | Path, default):
 
 
 def save_json(path: str | Path, data) -> None:
-    with open(path, "w", encoding="utf-8") as f:
-        json.dump(data, f, indent=2)
+    try:
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2)
+    except Exception as e:
+        # Log, dev info
+        print(f"Failed to save config to {path}: {e}", file=sys.stderr)
 
 
 def get_config():
@@ -430,8 +439,13 @@ def create_app():
 
     # Window + taskbar icon
     try:
-        icon_path = resource_path("scambuster_anniversary_updater.ico")
-        root.iconbitmap(icon_path)
+        if getattr(sys, "frozen", False):
+            # When frozen, use the exe's embedded icon
+            root.iconbitmap(sys.executable)
+        else:
+            # When running from source, use the .ico file
+            icon_path = resource_path("scambuster_anniversary_updater.ico")
+            root.iconbitmap(icon_path)
     except Exception:
         pass
 
