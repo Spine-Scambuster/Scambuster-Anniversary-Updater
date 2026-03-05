@@ -43,7 +43,7 @@ If you’re just a user:
 Example:
 
 - `ScambusterAnniversaryUpdaterSetup.exe` – installs into `C:\Program Files\Scambuster Anniversary Updater\`
-- `Scambuster Anniversary Updater.exe` – portable version, runs from any folder
+- `ScambusterAnniversaryUpdater.exe` – portable version, runs from any folder
 
 ---
 
@@ -78,7 +78,7 @@ Example:
 6. The **log panel** at the bottom shows each step (downloads, extraction, errors, etc.).
 
 > Note: The Scambuster–Spineshatter addon requires the Scambuster framework.  
-> The tool will enforce this and disable installation of Spineshatter-Scambuster if Scambuster framework is missing.
+> The tool will enforce this and disable installation of Scambuster–Spineshatter if the Scambuster framework is missing.
 
 ---
 
@@ -86,7 +86,7 @@ Example:
 
 The tool stores your selected WoW root in a simple JSON file:
 
-- `config.json` is located next to the executable (or in the install folder if you use an installer).
+- `config.json` is stored in the user’s application data folder (for example, `C:\Users\<YourUser>\AppData\Roaming\ScambusterAnniversaryUpdater\config.json` on Windows).
 - Structure (example):
 
   ```json
