@@ -38,7 +38,7 @@ The UI is built with Tkinter and the standalone executable is created with PyIns
 
 If you’re just a user:
 
-- Download the latest **installer** or **portable exe** from the project’s Releases page.
+- Download the latest **installer** or **portable exe** from the [releases page](https://github.com/Spine-Scambuster/Scambuster-Anniversary-Updater/releases).
 
 Example:
 
