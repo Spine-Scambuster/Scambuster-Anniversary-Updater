@@ -1,6 +1,6 @@
 # Scambuster Anniversary Updater 2.0
 
-Scambuster Anniversary Updater is a small Windows utility that installs and keeps up to date the **[Scambuster framework](https://github.com/hypernormalisation/Scambuster)** and the **Scambuster–Spineshatter** addon for the WoW Anniversary client.
+Scambuster Anniversary Updater is a small Windows utility that installs and keeps up to date the **[Scambuster framework](https://github.com/hypernormalisation/Scambuster)** and the **Scambuster–Spineshatter(https://gitlab.com/spineshatter/Scambuster-Spineshatter)** addon for the WoW Anniversary client.
 
 It is built for the **Spineshatter EU** community and automates downloading the latest releases and installing them into your `_anniversary_` AddOns folder.
 
