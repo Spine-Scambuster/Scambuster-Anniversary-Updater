@@ -26,8 +26,8 @@ ADDONS = [
         "name": "Scambuster-Spineshatter",
         "folder": "Scambuster-Spineshatter",
         "toc": "Scambuster-Spineshatter.toc",
-        "owner": "Spine-Scambuster",
-        "repo": "Scambuster-Spineshatter",
+        "project_id": "84219362",
+        "source": "gitlab",
     },
 ]
 
@@ -156,15 +156,36 @@ def remove_addon(addon_cfg: dict, wow_root: Path, log_widget: tk.Text) -> None:
 
 
 def get_latest_release(addon_cfg: dict) -> dict:
-    url = API_RELEASES_URL_TMPL.format(owner=addon_cfg["owner"], repo=addon_cfg["repo"])
-    resp = requests.get(
-        url,
-        headers={
-            "Accept": "application/vnd.github+json",
-            "User-Agent": "Scambuster-Updater",
-        },
-        timeout=15,
-    )
+
+    if addon_cfg.get("source") == "gitlab":
+        url = (
+            f"https://gitlab.com/api/v4/projects/"
+            f"{addon_cfg['project_id']}/releases/permalink/latest"
+        )
+
+        resp = requests.get(
+            url,
+            headers={
+                "User-Agent": "Scambuster-Updater",
+            },
+            timeout=15,
+        )
+
+    else:
+        url = API_RELEASES_URL_TMPL.format(
+            owner=addon_cfg["owner"],
+            repo=addon_cfg["repo"],
+        )
+
+        resp = requests.get(
+            url,
+            headers={
+                "Accept": "application/vnd.github+json",
+                "User-Agent": "Scambuster-Updater",
+            },
+            timeout=15,
+        )
+
     resp.raise_for_status()
     return resp.json()
 
@@ -175,16 +196,73 @@ def install_addon(addon_cfg: dict, wow_root: Path, log_widget: tk.Text) -> str |
 
     try:
         rel = get_latest_release(addon_cfg)
-        asset = next(
-            (a for a in rel.get("assets", []) if a["name"].lower().endswith(".zip")),
-            None,
-        )
-        if not asset:
-            raise Exception("No ZIP asset found")
+        if addon_cfg.get("source") == "gitlab":
 
-        zip_bytes = BytesIO(
-            requests.get(asset["browser_download_url"], timeout=60).content
+            assets = rel.get("assets", {}).get("links", [])
+
+            asset = next(
+                (
+                    a
+                    for a in assets
+                    if (
+                        addon_cfg["folder"].lower() in a["name"].lower()
+                        and a["name"].lower().endswith(".zip")
+                        and "source" not in a["name"].lower()
+                )
+                ),
+                None,
+            )
+
+            if not asset:
+                raise Exception(
+                    f"No addon ZIP found. Available assets: {[a['name'] for a in assets]}"
+                )
+
+            log_append(
+                log_widget,
+                f"Selected asset: {asset['name']}"
+            )
+
+            download_url = (
+                    asset.get("direct_asset_url")
+                    or asset.get("url")
+            )
+
+            if not download_url:
+                raise Exception(
+                    f"No download URL for: {asset['name']}"
+                )
+
+        else:
+
+            asset = next(
+                (
+                    a
+                    for a in rel.get("assets", [])
+                    if a["name"].lower().endswith(".zip")
+                ),
+                None,
+            )
+
+            if not asset:
+                raise Exception("No ZIP asset found")
+
+            download_url = asset["browser_download_url"]
+
+        r = requests.get(
+            download_url,
+            headers={
+                "User-Agent": "Scambuster-Updater",
+                "Accept": "application/octet-stream",
+            },
+            allow_redirects=True,
+            timeout=60
         )
+
+        r.raise_for_status()
+
+        zip_bytes = BytesIO(r.content)
+
         target_root = addons_path / addon_cfg["folder"]
 
         clear_directory(target_root, log_widget)
@@ -341,9 +419,15 @@ class AddonRow(tk.Frame):
             try:
                 rel = get_latest_release(self.addon_cfg)
                 self.releases[key] = rel.get("tag_name", "")
+
+                if self.addon_cfg.get("source") == "gitlab":
+                    source = f"GitLab project {self.addon_cfg['project_id']}"
+                else:
+                    source = f"{self.addon_cfg['owner']}/{self.addon_cfg['repo']}"
+
                 log_append(
                     self.log_widget,
-                    f"✓ {self.addon_cfg['owner']}/{self.addon_cfg['repo']}: {self.releases[key]}",
+                    f"✓ {source}: {self.releases[key]}",
                 )
             except Exception:
                 self.releases[key] = "error"
