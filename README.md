@@ -11,8 +11,8 @@ It is built for the **Spineshatter EU** community and automates downloading the 
 - Detects your World of Warcraft **Anniversary** installation (tries common paths and remembers your choice in `config.json`).
 - Installs or updates:
   - **Scambuster (framework)** – `hypernormalisation/Scambuster`
-  - **Scambuster–Spineshatter** – `Spine-Scambuster/Scambuster-Spineshatter`
-- Fetches the **latest GitHub release** for each addon and installs the `.zip` asset into:
+  - **Scambuster–Spineshatter** – `spineshatter/Scambuster-Spineshatter`
+- Fetches the **latest GitHub and GitLab releases** for each addon and installs the `.zip` asset into:
   - `<WoW root>/_anniversary_/Interface/AddOns/Scambuster`
   - `<WoW root>/_anniversary_/Interface/AddOns/Scambuster-Spineshatter`
 - Shows current **installed** vs **latest** version, with clear status:
