@@ -1,8 +1,11 @@
-# Scambuster Anniversary Updater
+# Scambuster Anniversary Updater 2.0
 
-Scambuster Anniversary Updater is a small Windows utility that installs and keeps up to date the **[Scambuster framework](https://github.com/hypernormalisation/Scambuster)** and the **[Scambuster–Spineshatter](https://github.com/Spine-Scambuster/Scambuster-Spineshatter)** addon for the WoW Anniversary client.
+Scambuster Anniversary Updater is a small Windows utility that installs and keeps up to date the **[Scambuster framework](https://github.com/hypernormalisation/Scambuster)** and the **Scambuster–Spineshatter** addon for the WoW Anniversary client.
 
-It is built for the **Spineshatter EU** community and automates downloading the latest releases from GitHub and installing them into your `_anniversary_` AddOns folder.
+It is built for the **Spineshatter EU** community and automates downloading the latest releases and installing them into your `_anniversary_` AddOns folder.
+
+⚠️ **Important:** Scambuster Anniversary Updater **1.0 is no longer supported**.  
+If you wish to continue using the Scambuster addon and receive future updates, remove the old updater and install **Scambuster Anniversary Updater 2.0**.
 
 ---
 
@@ -12,23 +15,35 @@ It is built for the **Spineshatter EU** community and automates downloading the 
 - Installs or updates:
   - **Scambuster (framework)** – `hypernormalisation/Scambuster`
   - **Scambuster–Spineshatter** – `spineshatter/Scambuster-Spineshatter`
-- Fetches the **latest GitHub and GitLab releases** for each addon and installs the `.zip` asset into:
+- Fetches the latest releases from their supported release sources:
+  - GitHub releases
+  - GitLab releases/packages
+- Installs addon `.zip` packages into:
   - `<WoW root>/_anniversary_/Interface/AddOns/Scambuster`
   - `<WoW root>/_anniversary_/Interface/AddOns/Scambuster-Spineshatter`
-- Shows current **installed** vs **latest** version, with clear status:
+- Shows current **installed** vs **latest** version with clear status:
   - Up to date
   - Update available
   - Not installed / requires Scambuster
 - Lets you **remove** each addon (deletes its folder under AddOns).
-- Logs all actions in a built‑in log panel.
+- Logs all actions in a built-in log panel.
+
+---
+
+## Version 2.0 Changes
+
+- Migrated Scambuster–Spineshatter updates from GitHub releases to the new GitLab release system.
+- Added support for GitLab-hosted addon packages.
+- Updated version detection and download handling for the new release workflow.
+- Improved updater support for future addon updates.
 
 ---
 
 ## Requirements
 
-- Windows (tested on modern 64‑bit Windows).
+- Windows (tested on modern 64-bit Windows).
 - World of Warcraft **Anniversary** client.
-- Internet access (to fetch GitHub releases).
+- Internet access for downloading addon releases.
 
 The UI is built with Tkinter and the standalone executable is created with PyInstaller.
 
@@ -38,47 +53,30 @@ The UI is built with Tkinter and the standalone executable is created with PyIns
 
 If you’re just a user:
 
-- Download the latest **installer** or **portable exe** from the [releases page](https://github.com/Spine-Scambuster/Scambuster-Anniversary-Updater/releases).
+Download the latest **installer** or **portable exe** from the releases page:
 
-Example:
+https://github.com/Spine-Scambuster/Scambuster-Anniversary-Updater/releases
 
-- `ScambusterAnniversaryUpdaterSetup.exe` – installs into `C:\Program Files\Scambuster Anniversary Updater\`
-- `ScambusterAnniversaryUpdater.exe` – portable version, runs from any folder
+Recommended:
+
+- `ScambusterAnniversaryUpdaterSetup.exe` – installer version
+- `ScambusterAnniversaryUpdater.exe` – portable version
 
 ---
 
 ## Usage
 
-1. **Run the app.**  
-   On first launch it will try to auto–detect your WoW root from common paths:
-   - `C:\Program Files (x86)\World of Warcraft`
-   - `C:\Program Files\World of Warcraft`
-   - `D:\World of Warcraft`
-   - `E:\World of Warcraft`
-
-2. If auto‑detection fails:
+1. Install and run **Scambuster Anniversary Updater 2.0**.
+2. On first launch it will try to auto-detect your WoW root folder.
+3. If detection fails:
    - Click **Browse** and select your WoW folder.
-
-3. The main table will show two rows:
+4. Select **Install** or **Update** for:
    - **Scambuster (framework)**
    - **Scambuster–Spineshatter**
-
-   For each row you’ll see:
-   - Installed version (from the `.toc` file, if present).
-   - Latest version (from GitHub releases).
-   - Status and action buttons (Install, Update, Remove).
-
-4. Click **Install** or **Update**:
-   - The tool downloads the latest `.zip` from GitHub.
-   - It clears the existing addon folder (if present).
-   - It extracts the archive into the correct AddOns subfolder.
-
-5. Use the **Remove** button to delete an addon completely.
-
-6. The **log panel** at the bottom shows each step (downloads, extraction, errors, etc.).
+5. The updater will download the latest release package and install it automatically.
 
 > Note: The Scambuster–Spineshatter addon requires the Scambuster framework.  
-> The tool will enforce this and disable installation of Scambuster–Spineshatter if the Scambuster framework is missing.
+> The updater will enforce this requirement before installing Scambuster–Spineshatter.
 
 ---
 
@@ -86,10 +84,11 @@ Example:
 
 The tool stores your selected WoW root in a simple JSON file:
 
-- `config.json` is stored in the user’s application data folder (for example, `C:\Users\<YourUser>\AppData\Roaming\ScambusterAnniversaryUpdater\config.json` on Windows).
-- Structure (example):
+- `config.json` is stored in the user’s application data folder.
 
-  ```json
-  {
-    "wow_root": "C:\\Program Files (x86)\\World of Warcraft"
-  }
+Example:
+
+```json
+{
+  "wow_root": "C:\\Program Files (x86)\\World of Warcraft"
+}
